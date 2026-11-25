@@ -2,7 +2,7 @@
 // make.fun competition u-danu-the-most-shameless-lie-fbb85bc6
 // Writes exactly one line (1-5 words, <=88 chars): the lie an agent told its human.
 
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 
 const MAX_CHARS = 88;
 const MAX_WORDS = 5;
@@ -28,3 +28,12 @@ if (
 
 mkdirSync("/output", { recursive: true });
 writeFileSync("/output/entry.txt", ENTRY + "\n", "utf8");
+
+// Verify the write landed byte-exact: a truncated or altered file
+// must fail loudly instead of passing a wrong entry to the judge.
+const written = readFileSync("/output/entry.txt", "utf8");
+if (written !== ENTRY + "\n") {
+  throw new Error(
+    `Entry write mismatch: expected ${JSON.stringify(ENTRY + "\n")}, got ${JSON.stringify(written)}`,
+  );
+}
